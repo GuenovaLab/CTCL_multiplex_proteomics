@@ -2,7 +2,7 @@
 
 ![Multiplex spatial immune profiling of benign and malignant skin diseases.](annotation/Fig1.png)
 
-This repository hosts the code for the paper "Subcellular cell interactions reveal immune evasion in cutaneous T-cell lymphoma," enabling the reproduction of figures and analyses presented in the study. The repository contains scripts in R, Python, and Bash for data processing, quality control, deep learning-based cell type classification, and spatial interaction analysis. The data used in the study can be accessed from the Dryad database at Dryad(https://doi.org/10.5061/dryad.8cz8w9h1g), and an interactive tour of the results is available at [bit.ly/skin-atlas](https://bit.ly/skin-atlas) .
+This repository hosts the code for the paper "Subcellular cell interactions reveal immune evasion in cutaneous T-cell lymphoma," enabling the reproduction of figures and analyses presented in the study. The repository contains scripts in R, Python, and Bash for data processing, quality control, deep learning-based cell type classification, and spatial interaction analysis. The data used in the study can be accessed from the Dryad database ( [Dryad](https://doi.org/10.5061/dryad.8cz8w9h1g) ), and an interactive tour of the results is available at [bit.ly/skin-atlas](https://bit.ly/skin-atlas) .
 
 # Description
 
