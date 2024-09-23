@@ -1,0 +1,23 @@
+{"crop_input_size": 60, "crop_size": 128, "root_dir": "/media/localadmin/T7/CHUV/Documents/Muliplex_Imaging_Pipeline/output/CellSighter/ROI-08-BL/cell_classification/",
+ "train_set": ["ROI-08-BL"], "val_set": ["ROI-08-BL"], "num_classes": 26, "epoch_max": 50, "lr": 0.001, "blacklist": [],
+  "channels_path": "/media/localadmin/T7/CHUV/Documents/Muliplex_Imaging_Pipeline/output/CellSighter/ROI-08-BL/cell_classification/channels.txt", "weight_to_eval": "", "sample_batch": true,
+   "to_pad": false, "size_data": 10, "aug": false,
+   "hierarchy_match": {
+   "0": "Artifact",
+    "1": "B_cell",
+     "2": "Basophil",
+      "3": "Endothelial",
+       "4": "Fibroblast",
+        "5": "Keratinocyte", 
+        "6": "Leukocyte",
+         "7": "Lymphatic",
+          "8": "Macrophages",
+           "9": "Monocytes",
+            "10": "NKT",
+             "11": "Neutrophils",
+              "12": "T_cytotoxic",
+                "14": "T_helper",
+                 "15": "T_regulatory",
+                  "16": "pDC"
+             }
+   }

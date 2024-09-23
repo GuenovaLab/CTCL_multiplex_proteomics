@@ -1,0 +1,68 @@
+ROI;Disease;Relative.Severity;CTCL.CAILS;Inflammarty.severity;Comment;KeepForAnalysis
+ROI-01;HD;;;;Approved;TRUE
+ROI-02;LP;;;Mild/Early;Approved;TRUE
+ROI-03;AD;Late/Sever;;Sever/Late;Approved;TRUE
+ROI-04;PS;Early/Mild;;Mild/Early;Approved;TRUE
+ROI-05;SS;Late/Sever;Regression;;Approved;TRUE
+ROI-06;MF;Early/Mild;Regression;;Approved;TRUE
+ROI-07;HD;;;;Approved;TRUE
+ROI-08;LP;Late/Sever;;Sever/Late;Approved;TRUE
+ROI-09;AD;Early/Mild;;Mild/Early;Approved;TRUE
+ROI-10;PS;Early/Mild;;Mild/Early;Approved;TRUE
+ROI-11;SS;Late/Sever;Stable/Progression;;Approved;TRUE
+ROI-12;MF;Late/Sever;Regression;;Approved;TRUE
+ROI-13;HD;;;;Approved;TRUE
+ROI-14;LP;Late/Sever;;Sever/Late;Approved;TRUE
+ROI-15;AD;Late/Sever;;Sever/Late;Approved;TRUE
+ROI-16;PS;;;Mild/Early;Approved;TRUE
+ROI-17;SS;Late/Sever;Stable/Progression;;Approved;TRUE
+ROI-18;HD;;;;Approved;TRUE
+ROI-19;LP;Early/Mild;;Mild/Early;ROI-52 and ROI-19 are the same patient;TRUE
+ROI-20;AD;;;Mild/Early;Approved;TRUE
+ROI-21;PS;Late/Sever;;Sever/Late;Approved;TRUE
+ROI-22;SS;Late/Sever;Stable/Progression;;Approved;TRUE
+ROI-23;MF;Late/Sever;Stable/Progression;;Approved;TRUE
+ROI-24;LP;Early/Mild;;Early/Mild;Approved;TRUE
+ROI-25;AD;;;;Approved;TRUE
+ROI-26;PS;Early/Mild;;Early/Mild;Approved;TRUE
+ROI-27;MF;Late/Sever;Regression;;Approved;TRUE
+ROI-28;HD;;;;Approved;TRUE
+ROI-29;DAR;;;Sever/Late;Approved;TRUE
+ROI-30;DAR;;;;Not Darier;FALSE
+ROI-31;LN;;;;Approved;TRUE
+ROI-32;TON;;;;Approved;TRUE
+ROI-33;HD;;;;Approved;TRUE
+ROI-34;HD;;;;Approved;TRUE
+ROI-35;DAR;;;Early/Mild;Approved;TRUE
+ROI-36;DAR;Early/Mild;;Sever/Late;Approved;TRUE
+ROI-37;LN;;;;Approved;TRUE
+ROI-38;TON;;;;Approved;TRUE
+ROI-39;HD;;;;Approved;TRUE
+ROI-40;HD;;;;Approved;TRUE
+ROI-41;DAR;Late/Sever;;Sever/Late;Approved;TRUE
+ROI-42;DAR;Early/Mild;;Sever/Late;Approved;TRUE
+ROI-43;PS;Early/Mild;;Early/Mild;Approved;TRUE
+ROI-44;AD;Late/Sever;;Sever/Late;Approved;TRUE
+ROI-45;AD;Early/Mild;;Early/Mild;Clinical DD, dermatopathology correct, but no follow up;TRUE
+ROI-46;AD;Early/Mild;;Early/Mild;Too small;FALSE
+ROI-47;DAR;Late/Sever;;Sever/Late;Approved;TRUE
+ROI-48;DAR;;;;Approved;TRUE
+ROI-49;PS;Early/Mild;;Early/Mild;Patient is AD;FALSE
+ROI-50;LP;Late/Sever;;Sever/Late;Approved;TRUE
+ROI-51;LP;Early/Mild;;Early/Mild;Too small, Clinical DD, dermatopathology correct, but no follow up;FALSE
+ROI-52;LP;Early/Mild;;Mild/Early;ROI-52 and ROI-19 are the same patient;FALSE
+ROI-53;THY;;;;Approved;TRUE
+ROI-54;PS;Late/Sever;;Sever/Late;Approved;TRUE
+ROI-55;SS;Late/Sever;No picture;;Approved;TRUE
+ROI-56;SS;Late/Sever;No picture;;Approved;TRUE
+ROI-57;MF;Late/Sever;Regression;;Approved;TRUE
+ROI-58;MF;Late/Sever;Miss diagnosed;;Misdiagnosis as MF, in fact Myeloid Lymphoma;FALSE
+ROI-59;THY;;;;Approved;TRUE
+ROI-60;SS;Late/Sever;Lost to follow up;;Approved;TRUE
+ROI-61;SS;Late/Sever;No picture;;Approved;TRUE
+ROI-62;MF;Early/Mild;Regression;;Approved;TRUE
+ROI-63;MF;Early/Mild;Stable/Progression;;Approved;TRUE
+ROI-64;HD;;;;;
+ROI-65;LP;;;;;
+ROI-66;AD;;;;;
+ROI-67;PS;;;;;

@@ -1,0 +1,45 @@
+marker,cell_type,positive,cell_type_color,default_min,default_max,color_map,visible,blending,important,batch
+Actin,Endothelial,TRUE,#080066,1500,4500,blue,TRUE,additive,TRUE,1
+LYVE1,Lymphatic,TRUE,#fec911,1500,6000,bop purple,TRUE,additive,FALSE,1
+CD79a,B_cell,TRUE,#401F7A,300,1000,green,FALSE,additive,TRUE,2
+CD3,B_cell,FALSE,#401F7A,500,3000,cyan,TRUE,additive,TRUE,2
+HLADR,B_cell,TRUE,#401F7A,2000,7000,green,FALSE,additive,FALSE,2
+CD57,NKT,TRUE,#8A6C0B,300,1200,yellow,FALSE,additive,TRUE,2
+CD3,NKT,TRUE,#8A6C0B,500,3000,cyan,FALSE,additive,FALSE,2
+CD123,pDC,TRUE,#00E5E8,300,700,red,FALSE,additive,TRUE,3
+CD3,pDC,FALSE,#00E5E8,500,3000,gray,FALSE,additive,TRUE,3
+HLADR,pDC,TRUE,#00E5E8,2000,7000,green,FALSE,additive,TRUE,3
+FcepsilonRIalpha,Basophil,TRUE,#FF6978,300,1300,magenta,FALSE,additive,TRUE,3
+CD3,Basophil,FALSE,#FF6978,500,3000,cyan,FALSE,additive,TRUE,3
+CD123,Basophil,TRUE,#FF6978,300,700,red,FALSE,additive,TRUE,3
+CD68,Macrophages,TRUE,#42b649ff,1500,3500,blue,FALSE,additive,TRUE,4
+CD3,Macrophages,FALSE,#42b649ff,500,3000,cyan,FALSE,additive,TRUE,4
+CD14,Macrophages,TRUE,#42b649ff,750,2000,yellow,FALSE,additive,FALSE,4
+HLADR,Macrophages,TRUE,#42b649ff,2000,7000,green,FALSE,additive,FALSE,4
+CD11b,Monocytes,TRUE,#eae71cff,500,1500,green,FALSE,additive,TRUE,4
+CD3,Monocytes,FALSE,#eae71cff,500,3000,cyan,FALSE,additive,TRUE,4
+CD14,Monocytes,TRUE,#eae71cff,750,2000,red,FALSE,additive,FALSE,4
+HLADR,Monocytes,TRUE,#eae71cff,2000,7000,green,FALSE,additive,FALSE,4
+CD16,Neutrophils,TRUE,#3BA99C,500,1500,magenta,FALSE,additive,TRUE,4
+CD3,Neutrophils,FALSE,#3BA99C,500,3000,cyan,FALSE,additive,TRUE,4
+CD11b,Neutrophils,TRUE,#3BA99C,500,1500,green,FALSE,additive,TRUE,4
+CD14,Neutrophils,FALSE,#3BA99C,750,2000,yellow,FALSE,additive,TRUE,4
+CD8a,T_cytotoxic,TRUE,#D72638,1000,5000,yellow,FALSE,additive,TRUE,5
+CD3,T_cytotoxic,TRUE,#D72638,500,3000,cyan,FALSE,additive,FALSE,5
+FoxP3,T_regulatory,TRUE,#f9ae1dff,1500,2500,red,TRUE,additive,TRUE,5
+CD4,T_regulatory,TRUE,#f9ae1dff,1500,5000,green,FALSE,additive,TRUE,5
+CD8a,T_regulatory,FALSE,#f9ae1dff,1000,5000,yellow,FALSE,additive,TRUE,5
+CD4,T_helper,TRUE,#0d522aff,1500,5000,green,TRUE,additive,TRUE,5
+CD3,T_helper,TRUE,#D72638,500,3000,cyan,FALSE,additive,FALSE,5
+CD8a,T_helper,FALSE,#0d522aff,1000,5000,yellow,TRUE,additive,FALSE,5
+Cytokeratin,Keratinocyte,TRUE,#6B0504,500,6000,bop orange,TRUE,additive,TRUE,6
+Podoplanin,Lymphatic,TRUE,#fec911,500,3000,magenta,TRUE,additive,TRUE,1
+CD14,Monocytic_Lineage,TRUE,#A27E6F,750,2000,red,FALSE,additive,TRUE,6
+CD68,Monocytic_Lineage,FALSE,#A27E6F,1500,3500,blue,FALSE,additive,TRUE,6
+CD11b,Monocytic_Lineage,FALSE,#A27E6F,500,1500,green,FALSE,additive,TRUE,6
+CD3,Monocytic_Lineage,FALSE,#A27E6F,500,3000,cyan,FALSE,additive,TRUE,6
+HLADR,APC,TRUE,#2D2327,2000,7000,green,FALSE,additive,TRUE,6
+CD14,APC,FALSE,#2D2327,750,2000,red,FALSE,additive,TRUE,6
+CD3,Monocytic_Lineage,FALSE,#2D2327,500,3000,cyan,FALSE,additive,TRUE,6
+CD45RA,Leukocyte,TRUE,#189cd5ff,1500,5000,gray,FALSE,additive,TRUE,6
+CollagenI,Fibroblast,TRUE,#DDC4DD,500,30000,bop blue,TRUE,additive,FALSE,6
