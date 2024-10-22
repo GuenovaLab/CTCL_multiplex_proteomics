@@ -38,7 +38,9 @@ if (!dir.exists(output_dir))
 # Loading the dataset ----------------------------------------------------------
 spe = qs::qread(file.path(output, "SpatialExperiment.qs"))
 
-# Finding positive markers -----------------------------------------------------
+################################################################################
+# Distribution-based Positive marker detection
+################################################################################
 cat("Finding positive markers...\n")
 
 pdf(file.path(output_dir, "Histogram_positive_marker_findCutoffs.pdf"))
@@ -47,8 +49,10 @@ dev.off()
 
 write.csv(marker_cutoffs, file.path(output_dir, "marker_cutoffs.csv"), row.names = T)
 
+################################################################################
+# Distribution-based Positive marker detection plotting
+################################################################################
 
-#Cyto per sample
 positive_marker_mat_cyto = normcounts(spe)
 for (marker in names(marker_cutoffs) ) {
   positive_marker_mat_cyto[marker, ] =
@@ -58,26 +62,8 @@ rownames(positive_marker_mat_cyto) = rownames(spe)
 colnames(positive_marker_mat_cyto) = colnames(spe)
 spe@assays@data$positive_marker = positive_marker_mat_cyto
 
-# Cell Overlay of positive markers
-spe@int_metadata$segmentation_dir = "output/segmentation/"
-
-pdf(file.path(output_dir, "postivive_marker_overlay.pdf"))
-for(i in rownames(spe)){
-  print(i)
-  print(plotSPE(
-    spe,
-    feature = i,
-    assay = "positive_marker", 
-    x_coord = "centroid.0",
-    y_coord = "centroid.1",
-    sample_id = "sample_id", size = 0.25
-  )
-  )
-}
-dev.off()
-
 # Plot Tiffs
-for (samp in "ROI-19") {
+for (samp in unique(spe$sample_id)) {
   print(samp)
   sampdir = file.path(output_dir, samp)
   if (!dir.exists(sampdir))
@@ -93,8 +79,9 @@ for (samp in "ROI-19") {
   }
 }
 
-
-# Plotting Heatmaps -----------------------------------------------------------
+################################################################################
+# Plotting Heatmaps 
+################################################################################
 
 cat("Plotting heatmaps All Markers...\n")
 set.seed(48)

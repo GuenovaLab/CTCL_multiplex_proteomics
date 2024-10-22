@@ -73,7 +73,9 @@ pdf(
 plot_reduced_dim_scExp(spe, color_by = "cell_type_positive_marker", reduced_dim = "UMAP", size = 0.25,  downsample = 1e6, min_quantile = 0, max_quantile = 1)
 dev.off()
 
-# Dimensionality Reduction with Seurat -----------------------------------------
+################################################################################
+# Dimensionality Reduction with Seurat (using all proteins)
+################################################################################
 run = TRUE
 if(run == TRUE){
   library(Seurat)
@@ -201,8 +203,9 @@ spe@int_colData$reducedDims$PCA_harmony = pca_harmony
 
 qs::qsave(spe, "output/SpatialExperiment.qs")
 
-
-# Dimensionality Reduction with Seurat - Celltype markers ----------------------
+################################################################################
+# Dimensionality Reduction with Seurat (using phenotyping markers only)
+################################################################################
 if(run == TRUE){
   library(Seurat)
   library(harmony)
@@ -385,71 +388,6 @@ if(run == TRUE){
   
 }
 
-# Plotting markers on UMAP ------------------------------------------------
-pdf(
-  file.path(output_dir, "DimensionalityReduction_Markers.pdf"),
-  width =  7,
-  height = 6
-)
-logcounts(spe) = normcounts(spe)
-for (i in rownames(spe)) {
-  print(
-    scater::plotReducedDim(spe, dimred = "UMAP_harmony", colour_by = i) +
-      scale_color_gradientn(name = "Normalized Avg.", colors = c("grey75", rev(
-        viridis::inferno(100)
-      ))) +
-      ggtitle(i)
-  )
-}
-dev.off()
-
-# Plotting positive markers on UMAP ------------------------------------------------
-pdf(
-  file.path(output_dir, "DimensionalityReduction_Positive_Markers.pdf"),
-  width =  7,
-  height = 6
-)
-for (i in rownames(spe)) {
-  plot_df = as.data.frame(reducedDim(spe, "UMAP_harmony"))
-  plot_df$highlight = as.logical(spe@assays@data$positive_marker[i,])
-  plot_df = plot_df %>% dplyr::mutate(transparency = ifelse(plot_df$highlight == 0, 0.1,0.7 )) %>% 
-    dplyr::mutate(transparency = I(.data[["transparency"]]))
-  print(
-    ggplot(plot_df, aes_string(x = "Component_1", y = "Component_2")) + 
-      geom_point(size = 0.25, aes(alpha = transparency, 
-                                  color = highlight)) + labs(color = i) + 
-      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
-            panel.background = element_blank(), axis.line = element_line(colour = "black"), 
-            panel.border = element_rect(colour = "black", fill = NA)) + ggtitle(i) + scale_color_manual(values = c("grey", "darkblue"))
-  )
-}
-dev.off()
-
-qs::qsave(spe, file.path(output_dir, "..", "SpatialExperiment.qs"))
-
-# Louvain Clustering ------------------------------------------------------
-spe = ChromSCape::find_clusters_louvain_scExp(spe, k = 10, resolution = 0.5, "PCA_harmony")
-set.seed(47)
-cell_cluster_color_df = data.frame("cell_cluster" = sort(unique(spe$cell_cluster)),
-                                   "cell_cluster_color" = sample(discrette_colors_50, length(unique(spe$cell_cluster))))
-spe = colors_scExp(spe, annotCol = "cell_cluster", color_by = "cell_cluster", color_df = cell_cluster_color_df)
-
-pdf(
-  file.path(output_dir, "DimensionalityReduction-Louvain-Clusters.pdf"),
-  width =  7,
-  height = 6
-)
-plot_reduced_dim_scExp(spe, color_by = "cell_cluster", reduced_dim = "PCA_harmony",  size = 0.25, downsample = 1e6, min_quantile = 0, max_quantile = 1)
-plot_reduced_dim_scExp(spe, color_by = "cell_cluster", reduced_dim = "UMAP_harmony", size = 0.25,  downsample = 1e6, min_quantile = 0, max_quantile = 1)
-dev.off()
-
-spe$louvain_cluster = spe$cell_cluster
-
-
-# Saving SpatialExperiment ------------------------------------------------
-qs::qsave(spe, file.path(output, "..", "SpatialExperiment.qs"))
-qs::qsave(Seu, file.path(output, "Seu.qs"))
-
 cat("Finished running cell clustering using Seurat ! \n")
 cat("\n")
 
@@ -537,31 +475,6 @@ dev.off()
 
 
 Seu$FlowSom_clusters = clustered_data$cluster[match(colnames(Seu), rownames(clustered_data))]
-png(
-  file.path(output_dir, paste0("UMAP_cellmarkers_FlowSOM_cluster_QN.png")),
-  width =  2500,
-  height = 1800,
-  res = 300
-)
-df = as.data.frame(Seu@reductions$umap@cell.embeddings[,1:2])
-df$FlowSom_clusters = Seu$FlowSom_clusters
-p = df %>% ggplot() + geom_point(aes(x = UMAP_1, y = UMAP_2, color = FlowSom_clusters),
-                                 pch = 20, size = 0.05, alpha = 0.5) + 
-  theme_bw() + scale_color_manual(values = discrette_colors_50[1:length(unique(Seu$FlowSom_clusters))])
-print(p)
-dev.off()
-
-
-png(file.path(output_dir,paste0("Hierarchy_FlowSom_Clusters_counts.png")),
-    width = 1500,
-    height = 1500, res = 250)
-PlotPies(flowsom_model, 
-         colorPalette = setNames(unique(spe$cell_type_CellSighter_color), unique(spe$cell_type_CellSighter)),
-         cellTypes = spe.$cell_type_CellSighter,
-         maxNodeSize = 2
-         )
-
-dev.off()
 
 png(file.path(output_dir,paste0("Heamtap_Correspondance_FlowSom_Clusters_counts.png")),
     width = 1500,

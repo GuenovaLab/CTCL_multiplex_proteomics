@@ -237,7 +237,6 @@ for(celltype1 in c( "Keratinocyte", "Endothelial")){
 }
 
 
-
 ################################################################################
 # Load log2FC protein interactions for each sample
 ################################################################################
@@ -436,7 +435,6 @@ for(celltype1 in c("T_helper", "NKT", "T_cytotoxic", "T_regulatory","pDC", "APC"
 
 WriteXLS::WriteXLS(list_DA_celltype1, ExcelFileName = file.path(output_dir, "intensity", "Differential_Enriched_Interactions_Malign_vs_Benign.xlsx"),
                    SheetNames = names(list_DA_celltype1), AdjWidth = T, AutoFilter = T, BoldHeaderRow = T)
-
 
 
 ################################################################################
@@ -936,6 +934,7 @@ for(dis in unique(spe$disease)[2:3]){
     
   }
 }
+
 ################################################################################
 # Boxplots of differentially enriched interactions - Responder vs Non Responder
 ################################################################################

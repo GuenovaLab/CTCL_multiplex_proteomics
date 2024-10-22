@@ -1,6 +1,6 @@
 # Analyze results from Pixie pixel clustering
-# authors: Pacome Prompsy
-# contact: pacome.prompsy@chuv.ch
+# authors: Annotator3 Prompsy
+# contact: Annotator3.prompsy@chuv.ch
 # Guenova Lab
 # CHUV (Centre Hospitalier Universitaire Vaudois), Lausanne, Suisse
 
@@ -32,120 +32,6 @@ output_dir = file.path(args$output, "CellSighter", "marker")
 
 corresponding_celltype = setNames(c("Negative","Positive"), c(0 , 1))
 spe = qs::qread("output/SpatialExperiment.qs")
-
-######################################################################################################
-# Training 
-######################################################################################################
-list_confusion_predictions= list()
-
-# Load data
-pdf(file.path("output/CellSighter/", "Plots", paste0("results_marker_classification_0.5_CD3_10_to_250_new.pdf")), width = 18, height = 15)
-for(marker in c("CD3")){
-  
-  for(i in seq(10,250,10)){
-    list_p = list()
-    print(i)
-    for(image in c("ROI-01-Pacome","ROI-02-Pacome","ROI-10-Pacome","ROI-11-Pacome","ROI-20-Pacome","ROI-21-Pacome", 
-                   "ROI-05-Ionoss", "ROI-07-Christoph", "ROI-09-Pacome", "ROI-15-Pacome","ROI-05-Christoph")){
-    # for(image in c("ROI-01-Pacome","ROI-02-Pacome","ROI-10-Pacome","ROI-11-Pacome","ROI-20-Pacome","ROI-21-Pacome")){
-   
-    labels = read.csv(file.path(output_dir,  "marker_classification", marker, paste0("val_results_",i,".csv")))
-    labels$cell_id = paste0(labels$image_id, "-", labels$cell_id)
-    labels = labels[grep(image, labels$image_id),]
-    
-    if(nrow(labels) > 0){
-      # predictions = read.csv(file.path(output_dir,  "Predictions", marker, "val_results.csv"))
-      predictions = labels
-      predictions$pred[which(predictions$pred == 1 & predictions$pred_prob < 0.5)] = 0
-      
-      predictions$marker_pred = corresponding_celltype[match(predictions$pred, as.numeric(names(corresponding_celltype)))]
-      predictions$label = labels$label[match(predictions$cell_id, labels$cell_id)]
-      predictions$marker_label = corresponding_celltype[match(predictions$label, as.numeric(names(corresponding_celltype)))]
-      
-      
-      # calculate confusion matrix
-      confusion_matrix <- table(as.factor(predictions$marker_pred),
-                                as.factor(predictions$marker_label))
-      
-      
-      
-      # convert confusion matrix to data frame
-      confusion_df <- as.data.frame(confusion_matrix)
-      
-      
-      # rename columns
-      colnames(confusion_df) <- c("True.Class", "Predicted.Class", "Count")
-      confusion_df$marker = marker
-      confusion_df$image = image
-      confusion_df$iteration = i
-      list_confusion_predictions[[paste0(marker, "-", image, "-", i)]]  = confusion_df
-      
-      # create heatmap with text labels
-      # png(file.path("output/CellSighter/Plots", paste0("predictions_vs_labels_marker_",marker,".png")), height = 1200, width = 1200, res = 300)
-      p = (ggplot(data = confusion_df, aes(x = Predicted.Class, y = True.Class, fill = log10(Count+1), label = Count)) +
-             geom_tile() +
-             scale_fill_viridis_c(begin = 0.4, direction = -1) +
-             labs(title = marker,
-                  x = "True Class", y = "Predicted Class", fill = "Count") +
-             geom_text(color = "white", size = 5)  + theme(axis.text.x = element_text(angle = 90)) +theme_classic()
-      ) + ggtitle(paste0(marker, " - ", paste0(image, "-" ,i)))
-      list_p[[paste0(image, "-" ,i)]] = p
-    }
-   
-    # print(p)
-
-    # spe. = spe[,grep(image, spe$sample_id)]
-    # spe.$marker_pred = predictions$marker_pred[match( spe.$cell_id, gsub("-Pacome|-Christoph|-Ionoss","",predictions$cell_id))]
-    # spe.$marker_pred[which(is.na(spe.$marker_pred))] = "Not_Predicted"
-    # cell_overlay_mat = getImageAsMatrix(file.path("output", "segmentation", paste0(image,"_whole_cell.tiff")))
-    # celltype_img_mat = get_metadata_image_overlay(spe., cell_overlay_mat, image, metadata = "marker_pred")
-    # 
-    # tiff::writeTIFF(as.matrix(celltype_img_mat),
-    #                 file.path(output_dir, "marker_classification", marker, paste0(image,"_predicted.tiff")),
-    #                 bits.per.sample = 32)
-    }
-    print(cowplot::plot_grid(plotlist = list_p, nrow = 3, ncol = 4))
-  }
-}
-dev.off()
-
-# Training metrics to determine the best training set
-confustion_df_all = do.call("rbind", list_confusion_predictions)
-
-pdf(file.path("output/CellSighter/", "Plots", paste0("results_marker_classification_0.5_CD195_10_to_150_metrics_used_for_training.pdf")), width = 16, height = 6)
-for(marker in c("CD195")){
-  confusion_df = confustion_df_all[confustion_df_all$marker == marker,]
-  confusion_df = confusion_df %>% mutate(Class = paste0(True.Class, Predicted.Class)) %>%
-    pivot_wider(names_from = Class, values_from = Count) %>% group_by(marker, image, iteration) %>% 
-    summarise(
-      NegativeNegative = max(0, mean(NegativeNegative, na.rm = T), na.rm = T),
-      PositiveNegative = max(0, mean(PositiveNegative, na.rm = T), na.rm = T),
-      NegativePositive = max(0, mean(NegativePositive, na.rm = T), na.rm = T),
-      PositivePositive = max(0, mean(PositivePositive, na.rm = T), na.rm = T)
-              ) 
-  
-  confusion_df = confusion_df %>% group_by(image, iteration) %>% 
-    summarise(
-      accuracy = (PositivePositive + NegativeNegative) / (PositivePositive + NegativePositive + NegativeNegative + PositiveNegative),
-      precision = PositivePositive / (PositivePositive + NegativePositive),
-      recall = PositivePositive / (PositivePositive + PositiveNegative),
-      F1 = 2 * precision * recall / (precision + recall)
-      )
-  
-  confusion_df = confusion_df %>% gather(key = "Metric", value = "Metric_value", c(accuracy, precision, recall,F1))
-  
-  # confusion_df = confusion_df %>% group_by(iteration, Metric) %>% summarise(Metric_value = mean(Metric_value)) %>% 
-  confusion_df = confusion_df %>% filter(Metric == "F1")
-  p = (ggplot(data = confusion_df, aes(x = (iteration), y = Metric_value, color = (image))) +
-         geom_line() +
-         labs(title = marker,
-              x = "Training Iteration", y = "F1 score", fill = "Count") +
-         theme(axis.text.x = element_text(angle = 90)) + theme_classic() +
-         ggtitle(marker) + scale_x_continuous(breaks = seq(0,150,10))) 
-  print(p)
-  
-}
-dev.off()
 
 
 ######################################################################################################
@@ -182,7 +68,7 @@ for(marker in rownames(spe)[which(!rownames(spe) %in% c("CD270", "CXCR4", "CD209
         if(file.exists(pred_file)) labels = read.csv(pred_file)
         if(file.exists(pred_file_batch)) labels = read.csv(pred_file_batch)
 
-        labels$cell_id = paste0(gsub("-Christoph|-Pacome", "", labels$image_id), "-", labels$cell_id)
+        labels$cell_id = paste0(gsub("-Annotator1|-Annotator2|-Annotator3|-Annotator4", "", labels$image_id), "-", labels$cell_id)
         predictions = labels
         
         predictions$marker_pred = corresponding_celltype[match(predictions$pred, as.numeric(names(corresponding_celltype)))]
@@ -380,17 +266,17 @@ results %>% arrange(desc(F1))  %>% filter(type != "deeplearning")  %>% head(10)
 
 ## Compare two annotators ------------------------------------------------------
 
-pdf(file.path(output_dir, "..", "Plots", "ROI-05-Christoph_vs_Ionoss.pdf"), width = 6, height = 5)
+pdf(file.path(output_dir, "..", "Plots", "ROI-05-Annotator1_vs_Annotator2.pdf"), width = 6, height = 5)
 for(marker in rownames(spe)){
   labels = read.csv(file.path(output_dir,  "marker_classification", marker, "val_results_50.csv"))
-  labels$cell_id = paste0(gsub("-Christoph|-Pacome|-Ionoss", "", labels$image_id), "-", labels$cell_id)
+  labels$cell_id = paste0(gsub("-Annotator1|-Annotator2|-Annotator3|-Annotator4", "", labels$image_id), "-", labels$cell_id)
   
   predictions = labels
   predictions$marker_pred = corresponding_celltype[match(predictions$pred, as.numeric(names(corresponding_celltype)))]
   predictions$marker_label = corresponding_celltype[match(predictions$label, as.numeric(names(corresponding_celltype)))]
   
-  lab_chris = predictions[which(predictions$image_id == "ROI-05-Christoph"),]
-  lab_ion = predictions[which(predictions$image_id == "ROI-05-Ionoss"),]
+  lab_chris = predictions[which(predictions$image_id == "ROI-05-Annotator1"),]
+  lab_ion = predictions[which(predictions$image_id == "ROI-05-Annotator2"),]
   common = intersect(lab_chris$cell_id, lab_ion$cell_id)
   if(length(common) > 5){
     lab_chris = lab_chris[match(common, lab_chris$cell_id),]
@@ -411,7 +297,7 @@ for(marker in rownames(spe)){
       geom_tile() + 
       scale_fill_viridis_c(begin = 0.4, direction = -1) +
       labs(title = marker,
-           x = "Ionoss Class", y = "Christoph Class", fill = "Count") +
+           x = "Annotator2 Class", y = "Annotator1 Class", fill = "Count") +
       geom_text(color = "white", size = 5)  + theme(axis.text.x = element_text(angle = 90)) +theme_classic() +
       ggtitle(marker)
     print(p)
@@ -420,7 +306,7 @@ for(marker in rownames(spe)){
 dev.off()
 
 ######################################################################################################
-# Assigning Predicted Positive Marker to Spatial Experiment
+# Assigning Predicted Positive Marker to Spatial Experiment and save
 ######################################################################################################
 
 # Assigning predicted positive marker to SpatialExperiment ---------------------------
@@ -455,14 +341,16 @@ for(sample in sort(unique(spe$sample_id))){
 spe@assays@data$CellSighter_marker_mat = CellSighter_marker_mat
 qs::qsave(spe, "output/SpatialExperiment.qs")
 
-
+######################################################################################################
 # Count number of manually annotated markers + and -:
+######################################################################################################
+
 marker_dir = list.dirs("output/CellSighter/marker/marker_classification/", recursive = F)
 names(marker_dir) = basename(marker_dir)
 marker_dir = marker_dir[which(names(marker_dir) %in% rownames(spe))]
 
-annot_images = c("ROI-01-Pacome",  "ROI-10-Pacome",  "ROI-20-Pacome",  "ROI-40-Pacome", "ROI-50-Pacome", "ROI-60-Pacome",
-                 "ROI-07-Christoph", "ROI-15-Pacome","ROI-05-Christoph", "ROI-05-Ionoss", "ROI-09-Pacome",  "ROI-30-Pacome")
+annot_images = c("ROI-01-Annotator3",  "ROI-10-Annotator3",  "ROI-20-Annotator3",  "ROI-40-Annotator3", "ROI-50-Annotator3", "ROI-60-Annotator3",
+                 "ROI-07-Annotator1", "ROI-15-Annotator3","ROI-05-Annotator1", "ROI-05-Annotator2", "ROI-09-Annotator3",  "ROI-30-Annotator3")
 
 mat_plus = matrix(0, nrow = nrow(spe), ncol = length(annot_images))
 colnames(mat_plus) = annot_images

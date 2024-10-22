@@ -18,8 +18,6 @@ setwd("/mnt/RECHERCHE/GUENOVA_LAB/Project_Multiplex_Phenotyping/Miltenyi/Muliple
 
 source("scripts/MultiplexImaging_utils.R")
 source("scripts/GlobalVars.R")
-devtools::load_all("annotation/silvermantest/")
-devtools::load_all("/media/localadmin//T7/InstitutCurie/Documents/GitLab/ChromSCape/")
 
 # Directorires --------------------------------------------
 output = "./output/" 

@@ -1,6 +1,6 @@
 # Analyze results from Pixie pixel clustering
-# authors: Pacome Prompsy
-# contact: pacome.prompsy@chuv.ch
+# authors: Annotator3 Prompsy
+# contact: Annotator3.prompsy@chuv.ch
 # Guenova Lab
 # CHUV (Centre Hospitalier Universitaire Vaudois), Lausanne, Suisse
 
@@ -34,13 +34,16 @@ corresponding_celltype = unlist(config$hierarchy_match)
 
 spe = qs::qread("output/SpatialExperiment.qs")
 
+######################################################################################################
 # Validation of training
+######################################################################################################
+
 list_confusion_predictions= list()
 
 # Load data
-validation_images = c("ROI-07-Christoph", "ROI-06-Christoph","ROI-15-Christoph", "ROI-17-Pacome")
+validation_images = c("ROI-07-Annotator1", "ROI-06-Annotator1","ROI-15-Annotator1", "ROI-17-Annotator3")
 labels = do.call("rbind", lapply(validation_images, function(i) read.csv(file.path(output_dir,  "Predictions", paste0(i,"_val_results.csv")))))
-labels$image_id = gsub("-Christoph|-Pacome","",labels$image_id)
+labels$image_id = gsub("-Annotator1|-Annotator3","",labels$image_id)
 labels$cell_id = paste0(labels$image_id,"-", labels$cell_id)
 predictions = labels
 
@@ -74,7 +77,7 @@ p
 dev.off()
 
 # High accuracy only
-validation_images = c("ROI-07-Christoph", "ROI-06-Christoph","ROI-15-Christoph", "ROI-17-Pacome")
+validation_images = c("ROI-07-Annotator1", "ROI-06-Annotator1","ROI-15-Annotator1", "ROI-17-Annotator3")
 labels = do.call("rbind", lapply(validation_images, function(i) read.csv(file.path(output_dir,  "Predictions", paste0(i,"_true_labels.csv")))))
 labels$cell_id = paste0(labels$fov,"-", labels$label)
 labels$cell_type[labels$cell_type == "Fibroblast"] = "Unknown-Stroma"
@@ -143,8 +146,11 @@ cat("\nF1-Score (Per Class):\n")
 print(f1_score)
 mean(f1_score, na.rm = T)
 
-# ----------------
+
+######################################################################################################
 # Training metrics to determine the best training set
+######################################################################################################
+
 pdf(file.path("output/CellSighter/", "Plots", paste0("results_marker_classification_0.5_CD195_10_to_150_metrics_used_for_training.pdf")), width = 16, height = 6)
 
 df = data.frame(sample_id = unique(predictions$image_id),
@@ -190,8 +196,10 @@ print(p)
 dev.off()
 
 
+######################################################################################################
+# Assigning predicted celltypes to SpatialExperiment and saving
+######################################################################################################
 
-# Assigning predicted celltypes to SpatialExperiment ---------------------------
 spe = qs::qread("output/SpatialExperiment.qs")
 spe$cell_type_CellSighter = "Unknown"
 spe$cell_type_CellSighter_prediction_prob = 0
@@ -219,7 +227,7 @@ for(type in unique(cell_markers$cell_type)){
 }
 
 # For each sample assign CellSighter celltype and refine Unknown (Fibroblasts),
-# Monocytic Lineage (Monocyte, Macrophages, Neutrophils) and Leukocytes (T helper,
+# Monocytic Lineage (Monocyte, Macrophages, Neutrophils) and CD45RA+ (T helper,
 # T regulatory, T cytotocic)
 # Finally, set Cytokeratin+CD16+ to Keratinocytes due to high CD16 background in
 # Epidermis.
@@ -351,11 +359,7 @@ for(samp in unique(spe$sample_id)){
                   file.path(output_dir, "Predictions", "Masks", paste0(samp,"_cell_type.tiff")),
                   bits.per.sample = 8)
 
-  
-
 }
-
-
 
 confidence_df = data.frame("avg_confident_cells" = avg_confident_cells,
                            "avg_confident_cells_after_reassignation" = avg_confident_cells_after_reassignation,
@@ -384,7 +388,7 @@ tab = tab[c("Unknown-Stroma","Leukocyte", "B_cell", "T_helper", "T_cytotoxic", "
             "Neutrophils", "Macrophages", "Keratinocyte", "Endothelial", "Lymphatic")]
 barplot(tab,  col = cell_type_color_df$cell_type_CellSighter_color[match(names(tab), cell_type_color_df$cell_type_CellSighter)], horiz = T, las = 1)
 
-# qs::qsave(spe, "output/SpatialExperiment.qs")
+qs::qsave(spe, "output/SpatialExperiment.qs")
 
 # calculate confusion matrix
 confusion_matrix <- table(as.factor(spe$cell_type_CellSighter), 
@@ -414,21 +418,21 @@ dev.off()
 library(reticulate)
 
 # 1 # Before guidelines - ROI-17
-labels_Christoph = read.csv("~/Documents/manual_annotation_safe/old/ROI-17-TL-Christoph/cells_df.csv")
-labels_Pacome = read.csv("~/Documents/manual_annotation_safe/old/ROI-17-TL-Pacome/cells_df.csv")
+labels_Annotator1 = read.csv("~/Documents/manual_annotation_safe/old/ROI-17-TL-Annotator1/cells_df.csv")
+labels_Annotator3 = read.csv("~/Documents/manual_annotation_safe/old/ROI-17-TL-Annotator3/cells_df.csv")
 
-labels_Christoph = labels_Christoph[which(!labels_Christoph$cell_type %in% c("Artifact","")),]
-labels_Christoph$cell_id = paste0(labels_Christoph$fov, "-", labels_Christoph$label)
-labels_Pacome = labels_Pacome[which(!labels_Pacome$cell_type %in% c("Artifact","")),]
-labels_Pacome$cell_id = paste0(labels_Pacome$fov, "-", labels_Pacome$label)
+labels_Annotator1 = labels_Annotator1[which(!labels_Annotator1$cell_type %in% c("Artifact","")),]
+labels_Annotator1$cell_id = paste0(labels_Annotator1$fov, "-", labels_Annotator1$label)
+labels_Annotator3 = labels_Annotator3[which(!labels_Annotator3$cell_type %in% c("Artifact","")),]
+labels_Annotator3$cell_id = paste0(labels_Annotator3$fov, "-", labels_Annotator3$label)
 
-cells = intersect(labels_Christoph$cell_id, labels_Pacome$cell_id)
+cells = intersect(labels_Annotator1$cell_id, labels_Annotator3$cell_id)
 
-labels_Christoph = labels_Christoph[match(cells, labels_Christoph$cell_id),]
-labels_Pacome = labels_Pacome[match(cells, labels_Pacome$cell_id),]
+labels_Annotator1 = labels_Annotator1[match(cells, labels_Annotator1$cell_id),]
+labels_Annotator3 = labels_Annotator3[match(cells, labels_Annotator3$cell_id),]
 
 
-confusion_df <- as.data.frame(table(labels_Christoph$cell_type, labels_Pacome$cell_type))
+confusion_df <- as.data.frame(table(labels_Annotator1$cell_type, labels_Annotator3$cell_type))
 
 # rename columns
 colnames(confusion_df) <- c("Annotator_1", "Annotator_2", "Count")
@@ -444,10 +448,10 @@ ggplot(data = confusion_df, aes(x = Annotator_1, y = Annotator_2, fill = log10(C
 dev.off()
 
 
-labels_Pacome_cell_type = factor(labels_Pacome$cell_type)
-labels_Christoph_cell_type = factor(labels_Christoph$cell_type, levels =  
-                                      levels(labels_Pacome_cell_type))
-confusion_matrix <- confusionMatrix(labels_Christoph_cell_type, labels_Pacome_cell_type)
+labels_Annotator3_cell_type = factor(labels_Annotator3$cell_type)
+labels_Annotator1_cell_type = factor(labels_Annotator1$cell_type, levels =  
+                                      levels(labels_Annotator3_cell_type))
+confusion_matrix <- confusionMatrix(labels_Annotator1_cell_type, labels_Annotator3_cell_type)
 
 # Calculate accuracy
 accuracy <- confusion_matrix$overall["Accuracy"]
@@ -457,19 +461,19 @@ f1_score <- mean(confusion_matrix$byClass[, "F1"], na.rm =T)
 
 # 2 # After guidelines - ROI-17
 np <- import("numpy")
-labels_Christoph <- np$load("output/CellSighter/celltype/cell_classification/CellTypes/cells2labels/ROI-17-Ionoss.npz", allow_pickle = T)["data"]
-cells_Christoph <- np$load("output/CellSighter/celltype/cell_classification/CellTypes/cells/ROI-17-Ionoss.npz", allow_pickle = T)["data"]
-labels_Pacome <- np$load("output/CellSighter/celltype/cell_classification/CellTypes/cells2labels/ROI-17-Pacome.npz", allow_pickle = T)["data"]
+labels_Annotator1 <- np$load("output/CellSighter/celltype/cell_classification/CellTypes/cells2labels/ROI-17-Annotator2.npz", allow_pickle = T)["data"]
+cells_Annotator1 <- np$load("output/CellSighter/celltype/cell_classification/CellTypes/cells/ROI-17-Annotator2.npz", allow_pickle = T)["data"]
+labels_Annotator3 <- np$load("output/CellSighter/celltype/cell_classification/CellTypes/cells2labels/ROI-17-Annotator3.npz", allow_pickle = T)["data"]
 
-labels_Christoph <- np$load("output/CellSighter/celltype/cell_classification/CellTypes/cells2labels/ROI-17-Ionoss.npz", allow_pickle = T)["data"]
-labels_Pacome <- np$load("output/CellSighter/celltype/cell_classification/CellTypes/cells2labels/ROI-17-Pacome.npz", allow_pickle = T)["data"]
+labels_Annotator1 <- np$load("output/CellSighter/celltype/cell_classification/CellTypes/cells2labels/ROI-17-Annotator2.npz", allow_pickle = T)["data"]
+labels_Annotator3 <- np$load("output/CellSighter/celltype/cell_classification/CellTypes/cells2labels/ROI-17-Annotator3.npz", allow_pickle = T)["data"]
 
-table(labels_Christoph, labels_Pacome)
+table(labels_Annotator1, labels_Annotator3)
 
-labels_Christoph = corresponding_celltype[match(labels_Christoph, as.numeric(names(corresponding_celltype)))]
-labels_Pacome = corresponding_celltype[match(labels_Pacome, as.numeric(names(corresponding_celltype)))]
+labels_Annotator1 = corresponding_celltype[match(labels_Annotator1, as.numeric(names(corresponding_celltype)))]
+labels_Annotator3 = corresponding_celltype[match(labels_Annotator3, as.numeric(names(corresponding_celltype)))]
 
-confusion_df <- as.data.frame(table(labels_Christoph, labels_Pacome))
+confusion_df <- as.data.frame(table(labels_Annotator1, labels_Annotator3))
 
 # rename columns
 colnames(confusion_df) <- c("Annotator_1", "Annotator_2", "Count")
@@ -484,9 +488,9 @@ ggplot(data = confusion_df, aes(x = Annotator_1, y = Annotator_2, fill = log10(C
   geom_text(color = "white", size = 5)  + theme(axis.text.x = element_text(angle = 90))
 dev.off()
 
-labels_Pacome_cell_type = factor(labels_Pacome)
-labels_Christoph_cell_type = factor(labels_Christoph)
-confusion_matrix <- confusionMatrix(labels_Christoph_cell_type, labels_Pacome_cell_type)
+labels_Annotator3_cell_type = factor(labels_Annotator3)
+labels_Annotator1_cell_type = factor(labels_Annotator1)
+confusion_matrix <- confusionMatrix(labels_Annotator1_cell_type, labels_Annotator3_cell_type)
 
 # Calculate accuracy
 accuracy2 <- confusion_matrix$overall["Accuracy"]
@@ -510,11 +514,12 @@ ggplot(data = df, aes(x = With_Guidelines, y = value, fill = name)) +
   theme(axis.text.x = element_text(angle = 90)) + theme_classic()
 dev.off()
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+################################################################################
 # Count number of manually annotated markers + and -:
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-annot_images = c("ROI-14-Karine","ROI-10-Ionoss", "ROI-20-Ionoss", "ROI-22-Christoph", "ROI-12-Pacome","ROI-08-Pacome", "ROI-13-Pacome",
-                 "ROI-07-Christoph", "ROI-06-Christoph","ROI-15-Christoph", "ROI-15-Pacome",  "ROI-17-Pacome")
+################################################################################
+
+annot_images = c("ROI-14-Annotator4","ROI-10-Annotator2", "ROI-20-Annotator2", "ROI-22-Annotator1", "ROI-12-Annotator3","ROI-08-Annotator3", "ROI-13-Annotator3",
+                 "ROI-07-Annotator1", "ROI-06-Annotator1","ROI-15-Annotator1", "ROI-15-Annotator3",  "ROI-17-Annotator3")
 
 celltypes = unique(spe$cell_type_CellSighter)
 celltypes[celltypes == "Unknown-Stroma"] = "Fibroblast"
